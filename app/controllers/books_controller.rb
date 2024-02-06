@@ -1,4 +1,4 @@
-class BookController < ApplicationController
+class BooksController < ApplicationController
   def index
     @books = Book.all
   end
@@ -12,6 +12,7 @@ class BookController < ApplicationController
     if @book.save
         redirect_to action:: 'show', id: @book.id
     else
+      render json: { error: "Unable to create book." }
     end
   end
    

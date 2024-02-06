@@ -1,6 +1,10 @@
-class AuthorController < ApplicationController
+class AuthorsController < ApplicationController
   def index
-    @authors = Author.all
+    @author = Author.all
+  end
+
+  def new
+    @author = Author.new
   end
   
   def show
@@ -8,10 +12,15 @@ class AuthorController < ApplicationController
   end
   
   def create
-    @author = Author.new(params[:author])
+   
+    author_params = params.require(:author).permit(:first_name, :last_name, )
+
+    @author = Author.new(author_params)
+  
     if @author.save
-        redirect_to action:: 'show', id: @author.id
+      redirect_to action: 'show', id: @author.id
     else
+      render json: { error: "Unable to create author." }
     end
   end
    
@@ -34,6 +43,5 @@ class AuthorController < ApplicationController
     redirect_to :action => 'index'
   end
 
-  validates :first_name, presence: true
-  validates :last_name, presence: true
+ 
 end
