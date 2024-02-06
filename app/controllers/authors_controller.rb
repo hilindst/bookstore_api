@@ -1,6 +1,7 @@
 class AuthorsController < ApplicationController
   def index
-    @author = Author.all
+    @authors = Author.all
+    render json: @authors
   end
 
   def new
@@ -17,10 +18,10 @@ class AuthorsController < ApplicationController
 
     @author = Author.new(author_params)
   
-    if @author.save
+   if @author.save
       redirect_to action: 'show', id: @author.id
     else
-      render json: { error: "Unable to create author." }
+     render json: { error: "Unable to create author." }
     end
   end
    
@@ -28,7 +29,7 @@ class AuthorsController < ApplicationController
     @author = Author.find(params[:id])
    
     if @author.update_attributes(author_param)
-       redirect_to :action => 'show', :id => @author
+      redirect_to action: 'show', id: @author.id
     else
     end
     
@@ -40,7 +41,7 @@ class AuthorsController < ApplicationController
   
   def destroy
     Author.find(params[:id]).destroy
-    redirect_to :action => 'index'
+     redirect_to :action => 'index'
   end
 
  

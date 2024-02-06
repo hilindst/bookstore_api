@@ -1,6 +1,7 @@
 class BooksController < ApplicationController
   def index
     @books = Book.all
+    render json: @books
   end
   
   def show
@@ -10,7 +11,7 @@ class BooksController < ApplicationController
   def create
     @book = Book.new(params[:book])
     if @book.save
-        redirect_to action:: 'show', id: @book.id
+        redirect_to action: 'show', id: @book.id
     else
       render json: { error: "Unable to create book." }
     end
@@ -20,7 +21,7 @@ class BooksController < ApplicationController
     @book = Book.find(params[:id])
    
     if @book.update_attributes(book)
-       redirect_to :action => 'show', :id => @book
+       redirect_to action: 'show', id: @book.id
     else
     end
     
