@@ -1,48 +1,47 @@
 class AuthorsController < ApplicationController
-  def index
-    @authors = Author.all
-    render json: @authors
-  end
+  before_action :set_author, only: [:show, :update, :destroy]
 
-  def new
-    @author = Author.new
-  end
-  
-  def show
-    @author = Author.find(params[:id])
-  end
-  
   def create
-   
-    author_params = params.require(:author).permit(:first_name, :last_name, )
-
-    @author = Author.new(author_params)
-  
-   if @author.save
-      redirect_to action: 'show', id: @author.id
+    author = Author.new(author_params)
+    if author.save
+      render json: author, status: :created
     else
-     render json: { error: "Unable to create author." }
+      render json: author.errors, status: :unprocessable_entity
     end
   end
-   
-  def update
-    @author = Author.find(params[:id])
-   
-    if @author.update_attributes(author_param)
-      redirect_to action: 'show', id: @author.id
-    else
+
+  def index 
+    render json: Author.all
+  end
+
+  def show 
+    render json: @author, status: :ok 
+  end
+
+  def update 
+    if @author.update(author_params)
+      render json: @author, status: :ok 
+    else 
+      render json: @author.errors, status: :unprocessable_entity
     end
-    
- end
- 
- def author_param
-    params.require(:author).permit(:first_name, :last_name)
- end
-  
+  end
+
   def destroy
-    Author.find(params[:id]).destroy
-     redirect_to :action => 'index'
+    if @author.destroy
+      # return a response with only headers and no body
+      head :no_content
+    else 
+      render json: @author.errors, status: :unprocessable_entity
+    end
   end
 
- 
+  private
+
+  def author_params
+    params.require(:author).permit(:author_name)
+  end
+
+  def set_author
+    @author = Author.find(params[:id])
+  end
 end

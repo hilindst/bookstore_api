@@ -1,38 +1,47 @@
 class BooksController < ApplicationController
-  def index
-    @books = Book.all
-    render json: @books
-  end
-  
-  def show
-    @book = Book.find(params[:id])
-  end
-  
+  before_action :set_book, only: [:show, :update, :destroy]
+
   def create
-    @book = Book.new(params[:book])
-    if @book.save
-        redirect_to action: 'show', id: @book.id
+    book = Book.new(book_params)
+    if book.save
+      render json: book, status: :created
     else
-      render json: { error: "Unable to create book." }
+      render json: book.errors, status: :unprocessable_entity
     end
   end
-   
-  def update
-    @book = Book.find(params[:id])
-   
-    if @book.update_attributes(book)
-       redirect_to action: 'show', id: @book.id
-    else
+
+  def index 
+    render json: Book.all
+  end
+
+  def show 
+    render json: @book, status: :ok 
+  end
+
+  def update 
+    if @book.update(book_params)
+      render json: @book, status: :ok 
+    else 
+      render json: @book.errors, status: :unprocessable_entity
     end
-    
- end
- 
- def book_param
-    params.require(:book).permit(:title, :author_id)
- end
-  
+  end
+
   def destroy
-    Book.find(params[:id]).destroy
-    redirect_to :action => 'index'
+    if @book.destroy
+      # return a response with only headers and no body
+      head :no_content
+    else 
+      render json: @book.errors, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def book_params
+    params.require(:book).permit(:title, :author_id)
+  end
+
+  def set_book
+    @book = Book.find(params[:id])
   end
 end
